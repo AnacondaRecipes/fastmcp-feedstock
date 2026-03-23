@@ -73,7 +73,14 @@ tests:
 
 about:
   summary: The fast, Pythonic way to build MCP servers.
-  homepage: https://github.com/jlowin/fastmcp
+  description: |
+    FastMCP is the standard framework for building MCP applications.
+    The Model Context Protocol (MCP) connects LLMs to tools and data. 
+    FastMCP gives you everything you need to go from prototype to production 
+  home: https://github.com/jlowin/fastmcp
   license: Apache-2.0
   license_file: LICENSE
+  license_family: Apache
+  dev_url: https://github.com/jlowin/fastmcp
+  doc_url: https://gofastmcp.com/getting-started/welcome
 
