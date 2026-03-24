@@ -65,7 +65,7 @@ requirements:
 test:
   imports:
     - fastmcp
-  requirements:
+  requires:
     - pip
   commands:
     - pip check
