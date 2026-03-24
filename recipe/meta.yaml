@@ -62,7 +62,7 @@ requirements:
     - openai >=1.102.0  # openai
     - pydocket >=0.18.0  # tasks
 
-tests:
+test:
   imports:
     - fastmcp
   requirements:
