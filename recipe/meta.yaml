@@ -28,7 +28,7 @@ requirements:
     - python-dotenv >=1.1.0
     - exceptiongroup >=1.2.2
     - httpx >=0.28.1,<1.0
-    - mcp >=1.24,<2.0
+    - mcp >=1.24.0,<2.0
     - openapi-pydantic >=0.5.1
     - opentelemetry-api >=1.20.0
     - packaging >=24.0
@@ -46,6 +46,7 @@ requirements:
     - jsonref >=1.1.0
     - uncalled-for >=0.2.0
     - watchfiles >=1.0.0
+    - griffelib >=2.0.0
     # py-key-value-aio[filetree]
     - aiofiles
     - anyio
