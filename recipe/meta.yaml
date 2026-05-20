@@ -10,7 +10,7 @@ source:
   sha256: db184b5391a31199323766a3abf3a8bfbb8010479f77eca84c0e554f18655c48
 
 build:
-  number: 0
+  number: 1
   script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
   entry_points:
     - fastmcp = fastmcp.cli:app
