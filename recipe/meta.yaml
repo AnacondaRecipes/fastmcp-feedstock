@@ -47,12 +47,12 @@ requirements:
     - uncalled-for >=0.2.0
     - watchfiles >=1.0.0
     # py-key-value-aio[filetree]
-    - aiofile >=3.5.0
-    - anyio >=4.4.0
+    - aiofile
+    - anyio
     # py-key-value-aio[memory]
-    - cachetools >=5.0.0
+    - cachetools
     # py-key-value-aio[keyring]
-    - keyring >=25.6.0
+    - keyring
     # pydantic[email]
     - email-validator
   run_constrained:
