@@ -144,7 +144,7 @@ test:
     # optional dependencies
     - openai
     - anthropic
-    - pydocket
+    - pydocket  # [py<314]
   commands:
     - pip check
     - fastmcp --help
