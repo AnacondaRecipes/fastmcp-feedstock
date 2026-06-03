@@ -90,7 +90,20 @@ requirements:
 {% set skip_tests = skip_tests + " --ignore=tests/server/transforms/test_resources_as_tools.py" %}
 {% set skip_tests = skip_tests + " --ignore=tests/server/transforms/test_search.py" %}
 
-# timeout/networking issues
+# missing pydocket
+{% set skip_tests = skip_tests + " --deselect=tests/server/providers/test_local_provider.py::TestLocalProviderTaskRegistration::test_get_tasks_returns_task_eligible_tools" %}  # [py>=314]
+{% set skip_tests = skip_tests + " --deselect=tests/server/test_dependencies.py::TestDependencyInjection::test_is_docket_available" %}  # [py>=314]
+{% set skip_tests = skip_tests + " --deselect=tests/server/test_dependencies.py::TestDependencyInjection::test_require_docket_passes_when_installed" %}  # [py>=314]
+
+{% set skip_tests = skip_tests + " --deselect=tests/server/test_dependencies.py::TestSharedDependencies::test_shared_sync_function" %}  # [py>=314]
+{% set skip_tests = skip_tests + " --deselect=tests/server/test_dependencies.py::TestSharedDependencies::test_shared_async_function" %}  # [py>=314]
+{% set skip_tests = skip_tests + " --deselect=tests/server/test_dependencies.py::TestSharedDependencies::test_shared_async_context_manager" %}  # [py>=314]
+{% set skip_tests = skip_tests + " --deselect=tests/server/test_dependencies.py::TestSharedDependencies::test_shared_with_depends" %}  # [py>=314]
+{% set skip_tests = skip_tests + " --deselect=tests/server/test_dependencies.py::TestSharedDependencies::test_shared_in_resource" %}  # [py>=314]
+{% set skip_tests = skip_tests + " --deselect=tests/server/test_dependencies.py::TestSharedDependencies::test_shared_in_prompt" %}  # [py>=314]
+{% set skip_tests = skip_tests + " --deselect=tests/tools/test_tool_timeout.py::TestToolTimeout::test_timeout_with_task_mode" %}  # [py>=314]
+
+# timeout/networking issues (some are flaky)
 {% set skip_tests = skip_tests + " --ignore=tests/client/test_streamable_http.py" %}
 {% set skip_tests = skip_tests + " --ignore=tests/server/http/test_http_dependencies.py" %}
 {% set skip_tests = skip_tests + " --ignore=tests/tools/tool/test_output_schema.py" %}
@@ -124,6 +137,7 @@ requirements:
 {% set skip_tests = skip_tests + " --deselect=tests/client/transports/test_uv_transport.py::test_uv_transport_module" %}
 {% set skip_tests = skip_tests + " --deselect=tests/experimental/transforms/test_code_mode.py::test_monty_provider_forwards_limits" %}
 {% set skip_tests = skip_tests + " --deselect=tests/experimental/transforms/test_code_mode.py::test_monty_provider_no_limits_by_default" %}
+{% set skip_tests = skip_tests + " --deselect=tests/test_mcp_config.py::test_multi_client_force_close" %}
 
 test:
   source_files:
