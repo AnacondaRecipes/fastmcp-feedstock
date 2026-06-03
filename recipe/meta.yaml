@@ -162,7 +162,7 @@ test:
   commands:
     - pip check
     - fastmcp --help
-    - FASTMCP_TEST_MODE=1 pytest --asyncio-mode=auto --inline-snapshot=disable --timeout=5 -vv {{ skip_tests }} tests
+    - pytest --asyncio-mode=auto --inline-snapshot=disable --timeout=5 -vv {{ skip_tests }} tests
 
 about:
   summary: The fast, Pythonic way to build MCP servers.
