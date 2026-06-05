@@ -12,7 +12,10 @@ source:
 build:
   number: 0
   skip: true  # [py<310]
-  script: cd fastmcp_slim && {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation && cd .. && {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
+  script_env:
+    # sdist has no .git; uv-dynamic-versioning falls back to 0.0.0 without this
+    - UV_DYNAMIC_VERSIONING_BYPASS={{ version }}
+  script: cd fastmcp_slim && {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
   entry_points:
     - fastmcp = fastmcp.cli:app
 
