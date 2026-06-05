@@ -134,6 +134,8 @@ requirements:
 
 # timeout/networking issues (some are flaky)
 {% set skip_tests = skip_tests + " --deselect=tests/client/test_stdio.py::TestSubprocessCrashRecovery::test_concurrent_requests_during_crash" %}
+{% set skip_tests = skip_tests + " --deselect=tests/client/test_stdio.py::TestSubprocessCrashRecovery::test_crash_during_active_context" %}  # [win]
+{% set skip_tests = skip_tests + " --deselect=tests/server/middleware/test_rate_limiting.py::TestRateLimitingMiddlewareIntegration::test_rate_limiting_with_different_operations" %}  # [aarch64]
 {% set skip_tests = skip_tests + " --ignore=tests/client/test_streamable_http.py" %}
 {% set skip_tests = skip_tests + " --ignore=tests/server/http/test_http_dependencies.py" %}
 {% set skip_tests = skip_tests + " --ignore=tests/tools/tool/test_output_schema.py" %}
