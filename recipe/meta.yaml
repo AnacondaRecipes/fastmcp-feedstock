@@ -35,8 +35,8 @@ requirements:
     - httpx >=0.28.1,<1.0
     - mcp >=1.24,<2.0
     - opentelemetry-api >=1.20.0
-    - starlette >=1.0.1
-    - authlib >=1.6.11
+    - starlette >=0.27  # upstream >=1.0.1; pkgs/main max 0.52.1
+    - authlib >=1.6.5  # upstream >=1.6.11; pkgs/main max 1.6.9
     - cyclopts >=4.0.0
     - griffelib >=2.0.0
     - jsonref >=1.1.0
@@ -69,7 +69,7 @@ requirements:
     - pydantic-monty ==0.0.17  # code-mode
     - google-genai >=1.18.0  # gemini
     - openai >=1.102.0  # openai
-    - pydocket >=0.20.0  # tasks
+    - pydocket >=0.18.0  # tasks; upstream >=0.20.0; pkgs/main max 0.18.2
 
 {% set skip_tests = "" %}
 
