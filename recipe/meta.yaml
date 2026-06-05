@@ -89,9 +89,19 @@ requirements:
 {% set skip_tests = skip_tests + " --ignore=tests/server/auth/test_cimd_validators.py" %}
 {% set skip_tests = skip_tests + " --ignore=tests/server/auth/test_oauth_proxy_redirect_validation.py" %}
 
-# missing prefab
+# missing prefab (apps providers import prefab_ui at module level)
 {% set skip_tests = skip_tests + " --ignore=tests/test_apps_prefab.py" %}
 {% set skip_tests = skip_tests + " --ignore=tests/test_fastmcp_app.py" %}
+{% set skip_tests = skip_tests + " --ignore=tests/apps/" %}
+{% set skip_tests = skip_tests + " --deselect=tests/cli/test_run.py::TestRunDevApps" %}
+{% set skip_tests = skip_tests + " --deselect=tests/test_apps.py::TestPrefabAppConfig::test_auto_synthesizes_renderer_resource" %}
+{% set skip_tests = skip_tests + " --deselect=tests/test_apps.py::TestPrefabAppConfig::test_equivalent_to_app_true" %}
+
+# missing pytest-examples
+{% set skip_tests = skip_tests + " --ignore=tests/docs/test_doc_examples.py" %}
+
+# repo scripts/ not on PYTHONPATH in test env
+{% set skip_tests = skip_tests + " --ignore=tests/scripts/" %}
 
 # missing fastmcp-remote
 {% set skip_tests = skip_tests + " --ignore=tests/cli/test_fastmcp_remote.py" %}
@@ -120,6 +130,8 @@ requirements:
 {% set skip_tests = skip_tests + " --deselect=tests/server/test_dependencies.py::TestSharedDependencies::test_shared_in_prompt" %}  # [py>=314]
 {% set skip_tests = skip_tests + " --deselect=tests/tools/test_tool_timeout.py::TestToolTimeout::test_timeout_with_task_mode" %}  # [py>=314]
 {% set skip_tests = skip_tests + " --deselect=tests/client/transports/test_memory_transport.py::test_task_teardown_does_not_hang" %}  # [py>=314]
+{% set skip_tests = skip_tests + " --deselect=tests/utilities/test_async_utils.py::TestAsyncPartialIntegration::test_async_partial_with_task_true_does_not_raise" %}  # [py>=314]
+{% set skip_tests = skip_tests + " --deselect=tests/utilities/test_async_utils.py::TestAsyncPartialIntegration::test_sync_partial_with_task_true_raises" %}  # [py>=314]
 
 # timeout/networking issues (some are flaky)
 {% set skip_tests = skip_tests + " --ignore=tests/client/test_streamable_http.py" %}
@@ -155,6 +167,9 @@ requirements:
 {% set skip_tests = skip_tests + " --deselect=tests/client/transports/test_uv_transport.py::test_uv_transport_module" %}
 {% set skip_tests = skip_tests + " --deselect=tests/experimental/transforms/test_code_mode.py::test_monty_provider_forwards_limits" %}
 {% set skip_tests = skip_tests + " --deselect=tests/experimental/transforms/test_code_mode.py::test_monty_provider_no_limits_by_default" %}
+{% set skip_tests = skip_tests + " --deselect=tests/experimental/transforms/test_code_mode.py::test_monty_provider_applies_default_limits" %}
+{% set skip_tests = skip_tests + " --deselect=tests/experimental/transforms/test_code_mode.py::test_monty_provider_explicit_none_disables_limits" %}
+{% set skip_tests = skip_tests + " --deselect=tests/experimental/transforms/test_code_mode.py::test_monty_provider_cancels_future_when_task_cancelled" %}
 {% set skip_tests = skip_tests + " --deselect=tests/test_mcp_config.py::test_multi_client_force_close" %}
 
 test:
@@ -188,10 +203,10 @@ about:
     FastMCP is the standard framework for building MCP applications.
     The Model Context Protocol (MCP) connects LLMs to tools and data. 
     FastMCP gives you everything you need to go from prototype to production 
-  home: https://gofastmcp.com
+  home: https://gofastmcp.com/getting-started/welcome
   license: Apache-2.0
   license_file: LICENSE
   license_family: Apache
   dev_url: https://github.com/PrefectHQ/fastmcp
-  doc_url: https://gofastmcp.com
+  doc_url: https://gofastmcp.com/getting-started/welcome
 
