@@ -10,7 +10,7 @@ source:
   sha256: b468722946fc467c3796a6572f7a14d93d48c014cf8fea12910245220cbbe4e1
 
 build:
-  number: 1
+  number: 2
   skip: true  # [py<310]
   script_env:
     # sdist has no .git; uv-dynamic-versioning falls back to 0.0.0 without this
@@ -134,6 +134,10 @@ requirements:
 {% set skip_tests = skip_tests + " --deselect=tests/client/test_stdio.py::TestSubprocessCrashRecovery::test_concurrent_requests_during_crash" %}
 {% set skip_tests = skip_tests + " --deselect=tests/client/test_stdio.py::TestSubprocessCrashRecovery::test_crash_during_active_context" %}  # [win]
 {% set skip_tests = skip_tests + " --deselect=tests/client/test_stdio.py::TestSubprocessCrashRecovery::test_proxy_recovers_after_stdio_crash" %}  # [win]
+# SSL verify context tests fail on Windows (ssl.SSLError: ASN1 NOT_ENOUGH_DATA)
+{% set skip_tests = skip_tests + " --deselect=tests/client/transports/test_transports.py::TestSSLVerify::test_streamable_http_transport_stores_verify_ssl_context" %}  # [win]
+{% set skip_tests = skip_tests + " --deselect=tests/client/transports/test_transports.py::TestSSLVerify::test_sse_transport_stores_verify_ssl_context" %}  # [win]
+{% set skip_tests = skip_tests + " --deselect=tests/client/transports/test_transports.py::TestSSLVerify::test_client_passes_verify_ssl_context_to_transport" %}  # [win]
 {% set skip_tests = skip_tests + " --deselect=tests/server/middleware/test_rate_limiting.py::TestRateLimitingMiddlewareIntegration::test_rate_limiting_with_different_operations" %}  # [aarch64]
 {% set skip_tests = skip_tests + " --ignore=tests/client/test_streamable_http.py" %}
 {% set skip_tests = skip_tests + " --ignore=tests/server/http/test_http_dependencies.py" %}
