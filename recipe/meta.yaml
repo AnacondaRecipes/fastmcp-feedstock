@@ -10,7 +10,7 @@ source:
   sha256: b468722946fc467c3796a6572f7a14d93d48c014cf8fea12910245220cbbe4e1
 
 build:
-  number: 0
+  number: 1
   skip: true  # [py<310]
   script_env:
     # sdist has no .git; uv-dynamic-versioning falls back to 0.0.0 without this
@@ -72,7 +72,7 @@ requirements:
     - pydantic-monty ==0.0.17  # code-mode
     - google-genai >=1.18.0  # gemini
     - openai >=1.102.0  # openai
-    - pydocket >=0.18.0  # tasks; upstream >=0.20.0; pkgs/main max 0.18.2
+    - pydocket >=0.20.0  # tasks
 
 {% set skip_tests = "" %}
 
@@ -117,10 +117,8 @@ requirements:
 {% set skip_tests = skip_tests + " --ignore=tests/server/transforms/test_resources_as_tools.py" %}
 {% set skip_tests = skip_tests + " --ignore=tests/server/transforms/test_search.py" %}
 
-# pydocket task tests (pkgs/main max 0.18.2; upstream requires >=0.19.0)
+# pydocket task integration tests (require live Redis backend)
 {% set skip_tests = skip_tests + " --deselect=tests/server/providers/test_local_provider.py::TestLocalProviderTaskRegistration::test_get_tasks_returns_task_eligible_tools" %}
-{% set skip_tests = skip_tests + " --deselect=tests/server/test_dependencies.py::TestDependencyInjection::test_is_docket_available" %}
-{% set skip_tests = skip_tests + " --deselect=tests/server/test_dependencies.py::TestDependencyInjection::test_require_docket_passes_when_installed" %}
 {% set skip_tests = skip_tests + " --deselect=tests/server/test_dependencies.py::TestSharedDependencies::test_shared_sync_function" %}
 {% set skip_tests = skip_tests + " --deselect=tests/server/test_dependencies.py::TestSharedDependencies::test_shared_async_function" %}
 {% set skip_tests = skip_tests + " --deselect=tests/server/test_dependencies.py::TestSharedDependencies::test_shared_async_context_manager" %}
@@ -194,6 +192,7 @@ test:
     # optional dependencies
     - openai
     - anthropic
+    - pydocket
   commands:
     - pip check
     - fastmcp --help
