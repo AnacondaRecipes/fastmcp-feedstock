@@ -10,7 +10,7 @@ source:
   sha256: b468722946fc467c3796a6572f7a14d93d48c014cf8fea12910245220cbbe4e1
 
 build:
-  number: 4
+  number: 5
   skip: true  # [py<310]
 
 requirements:
@@ -21,6 +21,12 @@ requirements:
     - wheel
   run:
     - python
+
+test:
+  requires:
+    - pip
+  commands:
+    - pip check
 
 outputs:
   - name: fastmcp-slim
