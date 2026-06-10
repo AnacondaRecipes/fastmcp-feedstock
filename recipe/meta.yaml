@@ -10,7 +10,7 @@ source:
   sha256: b468722946fc467c3796a6572f7a14d93d48c014cf8fea12910245220cbbe4e1
 
 build:
-  number: 1
+  number: 2
   skip: true  # [py<310]
 
 requirements:
@@ -25,7 +25,8 @@ outputs:
     script_env:
       # sdist has no .git; uv-dynamic-versioning falls back to 0.0.0 without this
       - UV_DYNAMIC_VERSIONING_BYPASS={{ version }}
-    script: cd fastmcp_slim && {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
+    script: build_fastmcp_slim.sh  # [unix]
+    script: build_fastmcp_slim.bat  # [win]
     build:
       entry_points:
         - fastmcp = fastmcp.cli:app
@@ -57,7 +58,8 @@ outputs:
     version: {{ version }}
     script_env:
       - UV_DYNAMIC_VERSIONING_BYPASS={{ version }}
-    script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
+    script: build_fastmcp.sh  # [unix]
+    script: build_fastmcp.bat  # [win]
     requirements:
       host:
         - python
