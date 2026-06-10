@@ -118,11 +118,11 @@ build:
 outputs:
   - name: fastmcp-slim
     version: {{ version }}
-    script_env:
-      # sdist has no .git; uv-dynamic-versioning falls back to 0.0.0 without this
-      - UV_DYNAMIC_VERSIONING_BYPASS={{ version }}
-    script: cd fastmcp_slim && {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
     build:
+      script_env:
+        # sdist has no .git; uv-dynamic-versioning falls back to 0.0.0 without this
+        - UV_DYNAMIC_VERSIONING_BYPASS={{ version }}
+      script: cd fastmcp_slim && {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
       entry_points:
         - fastmcp = fastmcp.cli:app
     requirements:
@@ -152,9 +152,10 @@ outputs:
 
   - name: fastmcp
     version: {{ version }}
-    script_env:
-      - UV_DYNAMIC_VERSIONING_BYPASS={{ version }}
-    script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
+    build:
+      script_env:
+        - UV_DYNAMIC_VERSIONING_BYPASS={{ version }}
+      script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
     requirements:
       host:
         - python
