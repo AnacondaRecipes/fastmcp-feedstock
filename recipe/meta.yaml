@@ -1,17 +1,6 @@
 {% set name = "fastmcp" %}
 {% set version = "3.4.2" %}
 
-package:
-  name: {{ name }}-split
-  version: {{ version }}
-
-source:
-  url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/fastmcp-{{ version }}.tar.gz
-  sha256: b468722946fc467c3796a6572f7a14d93d48c014cf8fea12910245220cbbe4e1
-
-build:
-  number: 0
-  skip: true  # [py<310]
 
 {% set skip_tests = "" %}
 
@@ -114,6 +103,25 @@ build:
 {% set skip_tests = skip_tests + " --deselect=tests/experimental/transforms/test_code_mode.py::test_monty_provider_explicit_none_disables_limits" %}
 {% set skip_tests = skip_tests + " --deselect=tests/experimental/transforms/test_code_mode.py::test_monty_provider_cancels_future_when_task_cancelled" %}
 {% set skip_tests = skip_tests + " --deselect=tests/test_mcp_config.py::test_multi_client_force_close" %}
+
+
+package:
+  name: {{ name }}-split
+  version: {{ version }}
+
+source:
+  url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/fastmcp-{{ version }}.tar.gz
+  sha256: b468722946fc467c3796a6572f7a14d93d48c014cf8fea12910245220cbbe4e1
+
+build:
+  number: 0
+  skip: true  # [py<310]
+
+requirements:
+  host:
+    - python
+  run:
+    - python
 
 outputs:
   - name: fastmcp-slim
