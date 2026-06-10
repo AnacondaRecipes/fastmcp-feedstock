@@ -10,7 +10,7 @@ source:
   sha256: b468722946fc467c3796a6572f7a14d93d48c014cf8fea12910245220cbbe4e1
 
 build:
-  number: 5
+  number: 0
   skip: true  # [py<310]
 
 requirements:
@@ -23,8 +23,6 @@ requirements:
     - python
 
 test:
-  requires:
-    - pip
   commands:
     - pip check
 
