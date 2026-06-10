@@ -2,7 +2,7 @@
 {% set version = "3.4.2" %}
 
 package:
-  name: {{ name|lower }}
+  name: {{ name }}-split
   version: {{ version }}
 
 source:
@@ -10,69 +10,8 @@ source:
   sha256: b468722946fc467c3796a6572f7a14d93d48c014cf8fea12910245220cbbe4e1
 
 build:
-  number: 2
+  number: 0
   skip: true  # [py<310]
-  script_env:
-    # sdist has no .git; uv-dynamic-versioning falls back to 0.0.0 without this
-    - UV_DYNAMIC_VERSIONING_BYPASS={{ version }}
-  script: cd fastmcp_slim && {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
-  entry_points:
-    - fastmcp = fastmcp.cli:app
-
-
-requirements:
-  host:
-    - python
-    - hatchling
-    - uv-dynamic-versioning >=0.7.0
-    - pip
-  run:
-    - python
-    - platformdirs >=4.0.0
-    - pydantic >=2.11.7
-    - pydantic-settings >=2.0.0
-    - python-dotenv >=1.1.0
-    - rich >=13.9.4
-    - typing_extensions >=4.0.0
-    - exceptiongroup >=1.2.2
-    - httpx >=0.28.1,<1.0
-    - mcp >=1.24,<2.0
-    - opentelemetry-api >=1.20.0
-    - starlette >=1.0.1
-    - authlib >=1.6.11
-    - cyclopts >=4.0.0
-    - griffelib >=2.0.0
-    - jsonref >=1.1.0
-    - jsonschema-path >=0.3.4
-    - joserfc >=1.1.0
-    - openapi-pydantic >=0.5.1
-    - packaging >=24.0
-    - pyperclip >=1.9.0
-    - python-multipart >=0.0.26
-    - pyyaml >=6.0,<7.0
-    - uncalled-for >=0.2.0
-    - uvicorn >=0.35
-    - watchfiles >=1.0.0
-    - websockets >=15.0.1
-    - py-key-value-aio >=0.4.4,<0.5.0
-    # py-key-value-aio[filetree]
-    - aiofile
-    - anyio
-    # py-key-value-aio[memory]
-    - cachetools
-    # py-key-value-aio[keyring]
-    - keyring
-    # pydantic[email]
-    - email-validator
-  run_constrained:
-    - anthropic >=0.48.0  # anthropic
-    - prefab-ui >=0.18.0  # apps
-    - azure-identity >=1.16.0  # azure
-    - pyjwt >=2.12.0  # azure
-    - pydantic-monty ==0.0.17  # code-mode
-    - google-genai >=1.18.0  # gemini
-    - openai >=1.102.0  # openai
-    - pydocket >=0.20.0  # tasks
 
 {% set skip_tests = "" %}
 
@@ -161,7 +100,6 @@ requirements:
 {% set skip_tests = skip_tests + " --deselect=tests/client/telemetry/test_client_tracing.py::TestSessionIdOnSpans::test_client_span_includes_session_id" %}
 {% set skip_tests = skip_tests + " --deselect=tests/client/telemetry/test_client_tracing.py::TestSessionIdOnSpans::test_server_span_includes_session_id" %}
 {% set skip_tests = skip_tests + " --deselect=tests/client/telemetry/test_client_tracing.py::TestSessionIdOnSpans::test_client_and_server_share_same_session_id" %}
-{% set skip_tests = skip_tests + " --deselect=tests/integration_tests/test_timeout_fix.py::test_slow_tool_with_http_transport" %}
 {% set skip_tests = skip_tests + " --deselect=tests/server/auth/test_jwt_provider_bearer.py::TestFastMCPBearerAuth::test_token_with_sufficient_scopes" %}
 {% set skip_tests = skip_tests + " --deselect=tests/server/middleware/test_initialization_middleware.py::test_state_isolation_between_streamable_http_clients" %}
 {% set skip_tests = skip_tests + " --deselect=tests/server/mount/test_advanced.py::TestMountedServerDocketBehavior::test_mounted_server_does_not_have_docket" %}
@@ -177,30 +115,118 @@ requirements:
 {% set skip_tests = skip_tests + " --deselect=tests/experimental/transforms/test_code_mode.py::test_monty_provider_cancels_future_when_task_cancelled" %}
 {% set skip_tests = skip_tests + " --deselect=tests/test_mcp_config.py::test_multi_client_force_close" %}
 
-test:
-  source_files:
-    - tests
-  imports:
-    - fastmcp
-  requires:
-    - pip
-    - pytest >=8.3.3
-    - pytest-asyncio >=1.2.0
-    - pytest-timeout >=2.4.0
-    - opentelemetry-sdk >=1.20.0
-    - fastapi >=0.115.12
-    - psutil >=7.0.0
-    - inline-snapshot >=0.27.2
-    - black # snapshot optional
-    - dirty-equals
-    # optional dependencies
-    - openai
-    - anthropic
-    - pydocket
-  commands:
-    - pip check
-    - fastmcp --help
-    - pytest --asyncio-mode=auto --inline-snapshot=disable --timeout=5 -vv {{ skip_tests }} tests
+outputs:
+  - name: fastmcp-slim
+    version: {{ version }}
+    script_env:
+      # sdist has no .git; uv-dynamic-versioning falls back to 0.0.0 without this
+      - UV_DYNAMIC_VERSIONING_BYPASS={{ version }}
+    script: cd fastmcp_slim && {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
+    build:
+      entry_points:
+        - fastmcp = fastmcp.cli:app
+    requirements:
+      host:
+        - python
+        - hatchling
+        - uv-dynamic-versioning >=0.7.0
+        - pip
+      run:
+        - python
+        - platformdirs >=4.0.0
+        - pydantic >=2.11.7
+        - pydantic-settings >=2.0.0
+        - python-dotenv >=1.1.0
+        - rich >=13.9.4
+        - typing_extensions >=4.0.0
+        # pydantic[email]
+        - email-validator
+    test:
+      imports:
+        - fastmcp
+      requires:
+        - pip
+      commands:
+        - pip check
+        - fastmcp --help
+
+  - name: fastmcp
+    version: {{ version }}
+    script_env:
+      - UV_DYNAMIC_VERSIONING_BYPASS={{ version }}
+    script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
+    requirements:
+      host:
+        - python
+        - hatchling
+        - uv-dynamic-versioning >=0.7.0
+        - pip
+      run:
+        - python
+        - {{ pin_subpackage('fastmcp-slim', exact=True) }}
+        - exceptiongroup >=1.2.2
+        - httpx >=0.28.1,<1.0
+        - mcp >=1.24,<2.0
+        - opentelemetry-api >=1.20.0
+        - starlette >=1.0.1
+        - authlib >=1.6.11
+        - cyclopts >=4.0.0
+        - griffelib >=2.0.0
+        - jsonref >=1.1.0
+        - jsonschema-path >=0.3.4
+        - joserfc >=1.1.0
+        - openapi-pydantic >=0.5.1
+        - packaging >=24.0
+        - pyperclip >=1.9.0
+        - python-multipart >=0.0.26
+        - pyyaml >=6.0,<7.0
+        - uncalled-for >=0.2.0
+        - uvicorn >=0.35
+        - watchfiles >=1.0.0
+        - websockets >=15.0.1
+        - py-key-value-aio >=0.4.4,<0.5.0
+        # py-key-value-aio[filetree]
+        - aiofile
+        - anyio
+        # py-key-value-aio[memory]
+        - cachetools
+        # py-key-value-aio[keyring]
+        - keyring
+      run_constrained:
+        - anthropic >=0.48.0  # anthropic
+        - prefab-ui >=0.18.0  # apps
+        - azure-identity >=1.16.0  # azure
+        - pyjwt >=2.12.0  # azure
+        - pydantic-monty ==0.0.17  # code-mode
+        - google-genai >=1.18.0  # gemini
+        - openai >=1.102.0  # openai
+        - pydocket >=0.20.0  # tasks
+    test:
+      source_files:
+        - tests
+        - pyproject.toml
+        - fastmcp_slim
+      imports:
+        - fastmcp
+      requires:
+        - pip
+        - pytest >=8.3.3
+        - pytest-asyncio >=1.2.0
+        - pytest-env >=1.1.5
+        - pytest-timeout >=2.4.0
+        - opentelemetry-sdk >=1.20.0
+        - fastapi >=0.115.12
+        - psutil >=7.0.0
+        - inline-snapshot >=0.27.2
+        - black # snapshot optional
+        - dirty-equals
+        # optional dependencies
+        - openai
+        - anthropic
+      commands:
+        - pip check
+        - fastmcp --help
+        - pytest -c pyproject.toml -m "not integration and not client_process and not conformance" -vv {{ skip_tests }} tests
 
 about:
   summary: The fast, Pythonic way to build MCP servers.
@@ -214,4 +240,3 @@ about:
   license_family: Apache
   dev_url: https://github.com/PrefectHQ/fastmcp
   doc_url: https://gofastmcp.com/getting-started/welcome
-

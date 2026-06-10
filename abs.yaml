@@ -1,5 +1,0 @@
-# Staging deps for pydocket tasks extra (uncalled-for, pydocket, burner-redis not yet on defaults)
-channels:
-  - https://staging.continuum.io/pbp/fs/burner-redis-feedstock/pr1/f6af5c9
-  - https://staging.continuum.io/pbp/fs/uncalled-for-feedstock/pr2/df3c766
-  - https://staging.continuum.io/pbp/fs/pydocket-feedstock/pr3/42abb6a
