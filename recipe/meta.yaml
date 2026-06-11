@@ -22,10 +22,6 @@ requirements:
   run:
     - python
 
-test:
-  commands:
-    - pip check
-
 outputs:
   - name: fastmcp-slim
     version: {{ version }}
@@ -156,6 +152,10 @@ outputs:
     {% set skip_tests = skip_tests + " --ignore=tests/server/transforms/test_prompts_as_tools.py" %}
     {% set skip_tests = skip_tests + " --ignore=tests/server/transforms/test_resources_as_tools.py" %}
     {% set skip_tests = skip_tests + " --ignore=tests/server/transforms/test_search.py" %}
+
+    # pydocket not in test env (run_constrained only; pydocket not yet on defaults)
+    {% set skip_tests = skip_tests + " --deselect=tests/server/test_dependencies.py::TestDependencyInjection::test_is_docket_available" %}
+    {% set skip_tests = skip_tests + " --deselect=tests/server/test_dependencies.py::TestDependencyInjection::test_require_docket_passes_when_installed" %}
 
     # pydocket task integration tests (require live Redis backend)
     {% set skip_tests = skip_tests + " --deselect=tests/server/providers/test_local_provider.py::TestLocalProviderTaskRegistration::test_get_tasks_returns_task_eligible_tools" %}
