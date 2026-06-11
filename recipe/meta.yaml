@@ -241,7 +241,7 @@ outputs:
         - pip check
         - fastmcp --help
         - FASTMCP_TEST_MODE=1 pytest -c pyproject.toml -m "not integration and not client_process and not conformance" -vv {{ skip_tests }} tests  # [unix]
-        - set FASTMCP_TEST_MODE=1 && pytest -c pyproject.toml -m "not integration and not client_process and not conformance" -vv {{ skip_tests }} tests  # [win]
+        - set "FASTMCP_TEST_MODE=1" && pytest -c pyproject.toml -m "not integration and not client_process and not conformance" -vv {{ skip_tests }} tests  # [win]
 
 about:
   summary: The fast, Pythonic way to build MCP servers.
