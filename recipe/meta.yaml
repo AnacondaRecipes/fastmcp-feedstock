@@ -54,8 +54,10 @@ outputs:
         - fastmcp
       requires:
         - pip
+        - cyclopts >=4.0.0  # CLI entry point imports cyclopts (server extra; test-only)
       commands:
         - pip check
+        - fastmcp --help
 
   - name: fastmcp
     version: {{ version }}
