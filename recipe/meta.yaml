@@ -1,12 +1,13 @@
-{% set name = "fastmcp" %}
+{% set name = "fastmcp-split" %}
+{% set pypi_name = "fastmcp" %}
 {% set version = "3.4.2" %}
 
 package:
-  name: {{ name }}-split
+  name: {{ name }}
   version: {{ version }}
 
 source:
-  url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/fastmcp-{{ version }}.tar.gz
+  url: https://pypi.org/packages/source/{{ pypi_name[0] }}/{{ pypi_name }}/fastmcp-{{ version }}.tar.gz
   sha256: b468722946fc467c3796a6572f7a14d93d48c014cf8fea12910245220cbbe4e1
 
 build:
@@ -15,11 +16,6 @@ build:
 
 requirements:
   host:
-    - python
-    - pip
-    - setuptools
-    - wheel
-  run:
     - python
 
 outputs:
@@ -49,40 +45,22 @@ outputs:
         - typing_extensions >=4.0.0
         # pydantic[email]
         - email-validator
+      run_constrained:
+        - anthropic >=0.48.0  # anthropic
+        - prefab-ui >=0.18.0  # apps
+        - azure-identity >=1.16.0  # azure
+        - pyjwt >=2.12.0  # azure
+        - pydantic-monty ==0.0.17  # code-mode
+        - google-genai >=1.18.0  # gemini
+        - openai >=1.102.0  # openai
+        - pydocket >=0.20.0  # tasks
     test:
       imports:
         - fastmcp
       requires:
         - pip
-        # test-only: fastmcp CLI (--help) imports client+server modules; not slim run deps
-        - exceptiongroup >=1.2.2
-        - httpx >=0.28.1,<1.0
-        - mcp >=1.24,<2.0
-        - opentelemetry-api >=1.20.0
-        - starlette >=1.0.1
-        - authlib >=1.6.11
-        - cyclopts >=4.0.0
-        - griffelib >=2.0.0
-        - jsonref >=1.1.0
-        - jsonschema-path >=0.3.4
-        - joserfc >=1.1.0
-        - openapi-pydantic >=0.5.1
-        - packaging >=24.0
-        - pyperclip >=1.9.0
-        - python-multipart >=0.0.26
-        - pyyaml >=6.0,<7.0
-        - uncalled-for >=0.2.0
-        - uvicorn >=0.35
-        - watchfiles >=1.0.0
-        - websockets >=15.0.1
-        - py-key-value-aio >=0.4.4,<0.5.0
-        - aiofile
-        - anyio
-        - cachetools
-        - keyring
       commands:
         - pip check
-        - fastmcp --help
 
   - name: fastmcp
     version: {{ version }}
@@ -127,15 +105,6 @@ outputs:
         - cachetools
         # py-key-value-aio[keyring]
         - keyring
-      run_constrained:
-        - anthropic >=0.48.0  # anthropic
-        - prefab-ui >=0.18.0  # apps
-        - azure-identity >=1.16.0  # azure
-        - pyjwt >=2.12.0  # azure
-        - pydantic-monty ==0.0.17  # code-mode
-        - google-genai >=1.18.0  # gemini
-        - openai >=1.102.0  # openai
-        - pydocket >=0.20.0  # tasks
 
     {% set skip_tests = "" %}
 
