@@ -46,6 +46,34 @@ outputs:
         # pydantic[email]
         - email-validator
       run_constrained:
+        - exceptiongroup >=1.2.2  # mcp
+        - httpx >=0.28.1,<1.0  # mcp
+        - mcp >=1.24,<2.0  # mcp
+        - opentelemetry-api >=1.20.0  # mcp
+        - starlette >=1.0.1  # mcp
+        - authlib >=1.6.11  # client, server
+        - py-key-value-aio >=0.4.4,<0.5.0  # client, server
+        # py-key-value-aio[filetree]
+        - aiofile  # client, server
+        - anyio  # client, server
+        # py-key-value-aio[memory]
+        - cachetools  # client, server
+        # py-key-value-aio[keyring]
+        - keyring  # client, server
+        - cyclopts >=4.0.0  # server
+        - griffelib >=2.0.0  # server
+        - jsonref >=1.1.0  # server
+        - jsonschema-path >=0.3.4  # server
+        - joserfc >=1.1.0  # server
+        - openapi-pydantic >=0.5.1  # server
+        - packaging >=24.0  # server
+        - pyperclip >=1.9.0  # server
+        - python-multipart >=0.0.26  # server
+        - pyyaml >=6.0,<7.0  # server
+        - uncalled-for >=0.2.0  # server
+        - uvicorn >=0.35  # server
+        - watchfiles >=1.0.0  # server
+        - websockets >=15.0.1  # server
         - anthropic >=0.48.0  # anthropic
         - prefab-ui >=0.18.0  # apps
         - azure-identity >=1.16.0  # azure
