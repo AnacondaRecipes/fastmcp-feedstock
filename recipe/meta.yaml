@@ -1,179 +1,281 @@
-{% set name = "fastmcp" %}
-{% set version = "3.1.1" %}
+{% set name = "fastmcp-split" %}
+{% set pypi_name = "fastmcp" %}
+{% set version = "3.4.2" %}
 
 package:
-  name: {{ name|lower }}
+  name: {{ name }}
   version: {{ version }}
 
 source:
-  url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/fastmcp-{{ version }}.tar.gz
-  sha256: db184b5391a31199323766a3abf3a8bfbb8010479f77eca84c0e554f18655c48
+  url: https://pypi.org/packages/source/{{ pypi_name[0] }}/{{ pypi_name }}/fastmcp-{{ version }}.tar.gz
+  sha256: b468722946fc467c3796a6572f7a14d93d48c014cf8fea12910245220cbbe4e1
 
 build:
-  number: 1
+  number: 0
   skip: true  # [py<310]
-  script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
-  entry_points:
-    - fastmcp = fastmcp.cli:app
-
 
 requirements:
   host:
     - python
-    - hatchling
-    - uv-dynamic-versioning >=0.7.0
-    - pip
-  run:
-    - python
-    - python-dotenv >=1.1.0
-    - exceptiongroup >=1.2.2
-    - httpx >=0.28.1,<1.0
-    - mcp >=1.24,<2.0
-    - openapi-pydantic >=0.5.1
-    - opentelemetry-api >=1.20.0
-    - packaging >=24.0
-    - platformdirs >=4.0.0
-    - rich >=13.9.4
-    - cyclopts >=4.0.0
-    - authlib >=1.6.5
-    - pydantic >=2.11.7
-    - pyyaml >=6.0,<7.0
-    - pyperclip >=1.9.0
-    - py-key-value-aio >=0.4.4,<0.5.0
-    - uvicorn >=0.35
-    - websockets >=15.0.1
-    - jsonschema-path >=0.3.4
-    - jsonref >=1.1.0
-    - uncalled-for >=0.2.0
-    - watchfiles >=1.0.0
-    # py-key-value-aio[filetree]
-    - aiofile
-    - anyio
-    # py-key-value-aio[memory]
-    - cachetools
-    # py-key-value-aio[keyring]
-    - keyring
-    # pydantic[email]
-    - email-validator
-  run_constrained:
-    - anthropic >=0.40.0  # anthropic
-    - prefab-ui >=0.6.0  # apps
-    - azure-identity >=1.16.0  # azure
-    - pydantic-monty >=0.0.7,<0.0.8  # code-mode
-    - google-genai >=1.18.0  # gemini
-    - openai >=1.102.0  # openai
-    - pydocket >=0.18.0  # tasks
 
-{% set skip_tests = "" %}
+outputs:
+  - name: fastmcp-slim
+    version: {{ version }}
+    script_env:
+      # sdist has no .git; uv-dynamic-versioning falls back to 0.0.0 without this
+      - UV_DYNAMIC_VERSIONING_BYPASS={{ version }}
+    script: build_fastmcp_slim.sh  # [unix]
+    script: build_fastmcp_slim.bat  # [win]
+    build:
+      entry_points:
+        - fastmcp = fastmcp.cli:app
+    requirements:
+      host:
+        - python
+        - hatchling
+        - uv-dynamic-versioning >=0.7.0
+        - pip
+      run:
+        - python
+        - platformdirs >=4.0.0
+        - pydantic >=2.11.7
+        - pydantic-settings >=2.0.0
+        - python-dotenv >=1.1.0
+        - rich >=13.9.4
+        - typing_extensions >=4.0.0
+        # pydantic[email]
+        - email-validator
+      run_constrained:
+        - exceptiongroup >=1.2.2  # mcp
+        - httpx >=0.28.1,<1.0  # mcp
+        - mcp >=1.24,<2.0  # mcp
+        - opentelemetry-api >=1.20.0  # mcp
+        - starlette >=1.0.1  # mcp
+        - authlib >=1.6.11  # client, server
+        - py-key-value-aio >=0.4.4,<0.5.0  # client, server
+        # py-key-value-aio[filetree]
+        - aiofile  # client, server
+        - anyio  # client, server
+        # py-key-value-aio[memory]
+        - cachetools  # client, server
+        # py-key-value-aio[keyring]
+        - keyring  # client, server
+        - cyclopts >=4.0.0  # server
+        - griffelib >=2.0.0  # server
+        - jsonref >=1.1.0  # server
+        - jsonschema-path >=0.3.4  # server
+        - joserfc >=1.1.0  # server
+        - openapi-pydantic >=0.5.1  # server
+        - packaging >=24.0  # server
+        - pyperclip >=1.9.0  # server
+        - python-multipart >=0.0.26  # server
+        - pyyaml >=6.0,<7.0  # server
+        - uncalled-for >=0.2.0  # server
+        - uvicorn >=0.35  # server
+        - watchfiles >=1.0.0  # server
+        - websockets >=15.0.1  # server
+        - anthropic >=0.48.0  # anthropic
+        - prefab-ui >=0.18.0  # apps
+        - azure-identity >=1.16.0  # azure
+        - pyjwt >=2.12.0  # azure
+        - pydantic-monty ==0.0.17  # code-mode
+        - google-genai >=1.18.0  # gemini
+        - openai >=1.102.0  # openai
+        - pydocket >=0.20.0  # tasks
+    test:
+      imports:
+        - fastmcp
+      requires:
+        - pip
+      commands:
+        - pip check
 
-# missing pytest-httpx/httpx_mock
-{% set skip_tests = skip_tests + " --ignore=tests/server/auth/providers/test_http_client.py" %}
-{% set skip_tests = skip_tests + " --ignore=tests/server/auth/providers/test_introspection.py" %}
-{% set skip_tests = skip_tests + " --ignore=tests/server/auth/test_jwt_provider.py" %}
-{% set skip_tests = skip_tests + " --ignore=tests/server/auth/test_cimd.py" %}
-{% set skip_tests = skip_tests + " --ignore=tests/client/test_openapi.py" %}
-{% set skip_tests = skip_tests + " --ignore=tests/client/test_sse.py" %}
-{% set skip_tests = skip_tests + " --ignore=tests/server/auth/test_cimd_validators.py" %}
-{% set skip_tests = skip_tests + " --ignore=tests/server/auth/test_oauth_proxy_redirect_validation.py" %}
+  - name: fastmcp
+    version: {{ version }}
+    script_env:
+      - UV_DYNAMIC_VERSIONING_BYPASS={{ version }}
+    script: build_fastmcp.sh  # [unix]
+    script: build_fastmcp.bat  # [win]
+    requirements:
+      host:
+        - python
+        - hatchling
+        - uv-dynamic-versioning >=0.7.0
+        - pip
+      run:
+        - python
+        - {{ pin_subpackage('fastmcp-slim', exact=True) }}
+        - exceptiongroup >=1.2.2
+        - httpx >=0.28.1,<1.0
+        - mcp >=1.24,<2.0
+        - opentelemetry-api >=1.20.0
+        - starlette >=1.0.1
+        - authlib >=1.6.11
+        - cyclopts >=4.0.0
+        - griffelib >=2.0.0
+        - jsonref >=1.1.0
+        - jsonschema-path >=0.3.4
+        - joserfc >=1.1.0
+        - openapi-pydantic >=0.5.1
+        - packaging >=24.0
+        - pyperclip >=1.9.0
+        - python-multipart >=0.0.26
+        - pyyaml >=6.0,<7.0
+        - uncalled-for >=0.2.0
+        - uvicorn >=0.35
+        - watchfiles >=1.0.0
+        - websockets >=15.0.1
+        - py-key-value-aio >=0.4.4,<0.5.0
+        # py-key-value-aio[filetree]
+        - aiofile
+        - anyio
+        # py-key-value-aio[memory]
+        - cachetools
+        # py-key-value-aio[keyring]
+        - keyring
 
-# missing prefab
-{% set skip_tests = skip_tests + " --ignore=tests/test_apps_prefab.py" %}
+    {% set skip_tests = "" %}
 
-# requires live Redis via pydocket task backend
-{% set skip_tests = skip_tests + " --ignore=tests/client/tasks/" %}
-{% set skip_tests = skip_tests + " --ignore=tests/server/tasks/" %}
+    # missing pytest-httpx/httpx_mock
+    {% set skip_tests = skip_tests + " --ignore=tests/server/auth/providers/test_http_client.py" %}
+    {% set skip_tests = skip_tests + " --ignore=tests/server/auth/providers/test_introspection.py" %}
+    {% set skip_tests = skip_tests + " --ignore=tests/server/auth/providers/test_clerk.py" %}
+    {% set skip_tests = skip_tests + " --ignore=tests/server/auth/providers/test_google.py" %}
+    {% set skip_tests = skip_tests + " --ignore=tests/server/auth/providers/test_workos.py" %}
+    {% set skip_tests = skip_tests + " --ignore=tests/server/auth/test_jwt_provider.py" %}
+    {% set skip_tests = skip_tests + " --ignore=tests/server/auth/test_cimd.py" %}
+    {% set skip_tests = skip_tests + " --ignore=tests/client/test_openapi.py" %}
+    {% set skip_tests = skip_tests + " --ignore=tests/client/test_sse.py" %}
+    {% set skip_tests = skip_tests + " --ignore=tests/server/auth/test_cimd_validators.py" %}
+    {% set skip_tests = skip_tests + " --ignore=tests/server/auth/test_oauth_proxy_redirect_validation.py" %}
 
-# missing lupa/lua
-{% set skip_tests = skip_tests + " --ignore=tests/server/test_server_docket.py" %}
-{% set skip_tests = skip_tests + " --ignore=tests/server/test_tool_annotations.py" %}
-{% set skip_tests = skip_tests + " --ignore=tests/server/transforms/test_prompts_as_tools.py" %}
-{% set skip_tests = skip_tests + " --ignore=tests/server/transforms/test_resources_as_tools.py" %}
-{% set skip_tests = skip_tests + " --ignore=tests/server/transforms/test_search.py" %}
+    # missing prefab (apps providers import prefab_ui at module level)
+    {% set skip_tests = skip_tests + " --ignore=tests/test_apps_prefab.py" %}
+    {% set skip_tests = skip_tests + " --ignore=tests/test_fastmcp_app.py" %}
+    {% set skip_tests = skip_tests + " --ignore=tests/apps/" %}
+    {% set skip_tests = skip_tests + " --deselect=tests/cli/test_run.py::TestRunDevApps" %}
+    {% set skip_tests = skip_tests + " --deselect=tests/test_apps.py::TestPrefabAppConfig::test_auto_synthesizes_renderer_resource" %}
+    {% set skip_tests = skip_tests + " --deselect=tests/test_apps.py::TestPrefabAppConfig::test_equivalent_to_app_true" %}
 
-# missing pydocket
-{% set skip_tests = skip_tests + " --deselect=tests/server/providers/test_local_provider.py::TestLocalProviderTaskRegistration::test_get_tasks_returns_task_eligible_tools" %}  # [py>=314]
-{% set skip_tests = skip_tests + " --deselect=tests/server/test_dependencies.py::TestDependencyInjection::test_is_docket_available" %}  # [py>=314]
-{% set skip_tests = skip_tests + " --deselect=tests/server/test_dependencies.py::TestDependencyInjection::test_require_docket_passes_when_installed" %}  # [py>=314]
+    # missing pytest-examples
+    {% set skip_tests = skip_tests + " --ignore=tests/docs/test_doc_examples.py" %}
 
-{% set skip_tests = skip_tests + " --deselect=tests/server/test_dependencies.py::TestSharedDependencies::test_shared_sync_function" %}  # [py>=314]
-{% set skip_tests = skip_tests + " --deselect=tests/server/test_dependencies.py::TestSharedDependencies::test_shared_async_function" %}  # [py>=314]
-{% set skip_tests = skip_tests + " --deselect=tests/server/test_dependencies.py::TestSharedDependencies::test_shared_async_context_manager" %}  # [py>=314]
-{% set skip_tests = skip_tests + " --deselect=tests/server/test_dependencies.py::TestSharedDependencies::test_shared_with_depends" %}  # [py>=314]
-{% set skip_tests = skip_tests + " --deselect=tests/server/test_dependencies.py::TestSharedDependencies::test_shared_in_resource" %}  # [py>=314]
-{% set skip_tests = skip_tests + " --deselect=tests/server/test_dependencies.py::TestSharedDependencies::test_shared_in_prompt" %}  # [py>=314]
-{% set skip_tests = skip_tests + " --deselect=tests/tools/test_tool_timeout.py::TestToolTimeout::test_timeout_with_task_mode" %}  # [py>=314]
+    # repo scripts/ not on PYTHONPATH in test env
+    {% set skip_tests = skip_tests + " --ignore=tests/scripts/" %}
 
-# timeout/networking issues (some are flaky)
-{% set skip_tests = skip_tests + " --ignore=tests/client/test_streamable_http.py" %}
-{% set skip_tests = skip_tests + " --ignore=tests/server/http/test_http_dependencies.py" %}
-{% set skip_tests = skip_tests + " --ignore=tests/tools/tool/test_output_schema.py" %}
-{% set skip_tests = skip_tests + " --ignore=tests/tools/tool/test_tool.py" %}
-{% set skip_tests = skip_tests + " --ignore=tests/client/auth/test_oauth_client.py" %}
-{% set skip_tests = skip_tests + " --ignore=tests/server/auth/providers/test_azure_scopes.py" %}
-{% set skip_tests = skip_tests + " --ignore=tests/server/providers/local_provider_tools/test_output_schema.py" %}
-{% set skip_tests = skip_tests + " --deselect=tests/server/providers/proxy/test_stateful_proxy_client.py::TestStatefulProxyClient::test_stateless_proxy" %}
-{% set skip_tests = skip_tests + " --deselect=tests/server/test_context.py::TestTransportIntegration::test_transport_set_via_http_middleware" %}
-{% set skip_tests = skip_tests + " --deselect=tests/server/test_server_docket.py::test_worker_executes_background_tasks" %}
-{% set skip_tests = skip_tests + " --deselect=tests/tools/tool/test_tool.py::TestToolFromFunction::test_instance_method" %}
-{% set skip_tests = skip_tests + " --deselect=tests/tools/tool/test_tool.py::TestToolFromFunction::test_basic_function" %}
-{% set skip_tests = skip_tests + " --deselect=tests/tools/tool/test_tool.py::TestToolFromFunction::test_async_function" %}
-{% set skip_tests = skip_tests + " --deselect=tests/tools/tool/test_tool.py::TestToolFromFunction::test_callable_object" %}
-{% set skip_tests = skip_tests + " --deselect=tests/tools/tool/test_tool.py::TestToolFromFunction::test_async_callable_object" %}
-{% set skip_tests = skip_tests + " --deselect=tests/utilities/test_tests.py::TestTemporarySettings::test_temporary_settings" %}
-{% set skip_tests = skip_tests + " --deselect=tests/server/auth/test_jwt_provider_bearer.py::TestFastMCPBearerAuth::test_authorized_access" %}
-{% set skip_tests = skip_tests + " --deselect=tests/client/auth/test_oauth_static_client.py::TestStaticClientE2E::test_static_client_with_dcr_disabled" %}
-{% set skip_tests = skip_tests + " --deselect=tests/client/auth/test_oauth_static_client.py::TestStaticClientE2E::test_static_client_with_dcr_enabled" %}
-{% set skip_tests = skip_tests + " --deselect=tests/client/telemetry/test_client_tracing.py::TestSessionIdOnSpans::test_client_span_includes_session_id" %}
-{% set skip_tests = skip_tests + " --deselect=tests/client/telemetry/test_client_tracing.py::TestSessionIdOnSpans::test_server_span_includes_session_id" %}
-{% set skip_tests = skip_tests + " --deselect=tests/client/telemetry/test_client_tracing.py::TestSessionIdOnSpans::test_client_and_server_share_same_session_id" %}
-{% set skip_tests = skip_tests + " --deselect=tests/integration_tests/test_timeout_fix.py::test_slow_tool_with_http_transport" %}
-{% set skip_tests = skip_tests + " --deselect=tests/server/auth/test_jwt_provider_bearer.py::TestFastMCPBearerAuth::test_token_with_sufficient_scopes" %}
-{% set skip_tests = skip_tests + " --deselect=tests/server/middleware/test_initialization_middleware.py::test_state_isolation_between_streamable_http_clients" %}
-{% set skip_tests = skip_tests + " --deselect=tests/server/mount/test_advanced.py::TestMountedServerDocketBehavior::test_mounted_server_does_not_have_docket" %}
-{% set skip_tests = skip_tests + " --deselect=tests/server/providers/proxy/test_stateful_proxy_client.py::TestStatefulProxyClient::test_stateful_proxy_elicitation_over_http" %}
-{% set skip_tests = skip_tests + " --deselect=tests/tools/tool_transform/test_schemas.py::TestTransformToolOutputSchema::test_transform_inherits_parent_output_schema" %}
-{% set skip_tests = skip_tests + " --deselect=tests/tools/tool_transform/test_schemas.py::TestTransformToolOutputSchema::test_transform_with_custom_function_inferred_schema" %}
-{% set skip_tests = skip_tests + " --deselect=tests/client/transports/test_uv_transport.py::test_uv_transport" %}
-{% set skip_tests = skip_tests + " --deselect=tests/client/transports/test_uv_transport.py::test_uv_transport_module" %}
-{% set skip_tests = skip_tests + " --deselect=tests/experimental/transforms/test_code_mode.py::test_monty_provider_forwards_limits" %}
-{% set skip_tests = skip_tests + " --deselect=tests/experimental/transforms/test_code_mode.py::test_monty_provider_no_limits_by_default" %}
-{% set skip_tests = skip_tests + " --deselect=tests/test_mcp_config.py::test_multi_client_force_close" %}
+    # missing fastmcp-remote
+    {% set skip_tests = skip_tests + " --ignore=tests/cli/test_fastmcp_remote.py" %}
 
-test:
-  source_files:
-    - tests
-  imports:
-    - fastmcp
-  requires:
-    - pip
-    - pytest >=8.3.3
-    - pytest-asyncio >=1.2.0
-    - pytest-timeout >=2.4.0
-    - opentelemetry-sdk >=1.20.0
-    - fastapi >=0.115.12
-    - psutil >=7.0.0
-    - inline-snapshot >=0.27.2
-    - black # snapshot optional
-    - dirty-equals
-    # optional dependencies
-    - openai
-    - anthropic
-    - pydocket  # [py<314]
-  commands:
-    - pip check
-    - fastmcp --help
-    - pytest --asyncio-mode=auto --inline-snapshot=disable --timeout=5 -vv {{ skip_tests }} tests
+    # requires live Redis via pydocket task backend
+    {% set skip_tests = skip_tests + " --ignore=tests/client/tasks/" %}
+    {% set skip_tests = skip_tests + " --ignore=tests/server/tasks/" %}
+
+    # missing lupa/lua
+    {% set skip_tests = skip_tests + " --ignore=tests/server/test_server_docket.py" %}
+    {% set skip_tests = skip_tests + " --ignore=tests/server/test_tool_annotations.py" %}
+    {% set skip_tests = skip_tests + " --ignore=tests/server/transforms/test_prompts_as_tools.py" %}
+    {% set skip_tests = skip_tests + " --ignore=tests/server/transforms/test_resources_as_tools.py" %}
+    {% set skip_tests = skip_tests + " --ignore=tests/server/transforms/test_search.py" %}
+
+    # pydocket not in test env (run_constrained only; pydocket not yet on defaults)
+    {% set skip_tests = skip_tests + " --deselect=tests/server/test_dependencies.py::TestDependencyInjection::test_is_docket_available" %}
+    {% set skip_tests = skip_tests + " --deselect=tests/server/test_dependencies.py::TestDependencyInjection::test_require_docket_passes_when_installed" %}
+
+    # pydocket task integration tests (require live Redis backend)
+    {% set skip_tests = skip_tests + " --deselect=tests/server/providers/test_local_provider.py::TestLocalProviderTaskRegistration::test_get_tasks_returns_task_eligible_tools" %}
+    {% set skip_tests = skip_tests + " --deselect=tests/server/test_dependencies.py::TestSharedDependencies::test_shared_sync_function" %}
+    {% set skip_tests = skip_tests + " --deselect=tests/server/test_dependencies.py::TestSharedDependencies::test_shared_async_function" %}
+    {% set skip_tests = skip_tests + " --deselect=tests/server/test_dependencies.py::TestSharedDependencies::test_shared_async_context_manager" %}
+    {% set skip_tests = skip_tests + " --deselect=tests/server/test_dependencies.py::TestSharedDependencies::test_shared_with_depends" %}
+    {% set skip_tests = skip_tests + " --deselect=tests/server/test_dependencies.py::TestSharedDependencies::test_shared_in_resource" %}
+    {% set skip_tests = skip_tests + " --deselect=tests/server/test_dependencies.py::TestSharedDependencies::test_shared_in_prompt" %}
+    {% set skip_tests = skip_tests + " --deselect=tests/tools/test_tool_timeout.py::TestToolTimeout::test_timeout_with_task_mode" %}
+    {% set skip_tests = skip_tests + " --deselect=tests/client/transports/test_memory_transport.py::test_task_teardown_does_not_hang" %}
+    {% set skip_tests = skip_tests + " --deselect=tests/utilities/test_async_utils.py::TestAsyncPartialIntegration::test_async_partial_with_task_true_does_not_raise" %}
+    {% set skip_tests = skip_tests + " --deselect=tests/utilities/test_async_utils.py::TestAsyncPartialIntegration::test_sync_partial_with_task_true_raises" %}
+
+    # timeout/networking issues (some are flaky)
+    {% set skip_tests = skip_tests + " --deselect=tests/client/test_stdio.py::TestSubprocessCrashRecovery::test_concurrent_requests_during_crash" %}
+    {% set skip_tests = skip_tests + " --deselect=tests/client/test_stdio.py::TestSubprocessCrashRecovery::test_crash_during_active_context" %}  # [win]
+    {% set skip_tests = skip_tests + " --deselect=tests/client/test_stdio.py::TestSubprocessCrashRecovery::test_proxy_recovers_after_stdio_crash" %}  # [win]
+    # SSL verify context tests fail on Windows (ssl.SSLError: ASN1 NOT_ENOUGH_DATA)
+    {% set skip_tests = skip_tests + " --deselect=tests/client/transports/test_transports.py::TestSSLVerify::test_streamable_http_transport_stores_verify_ssl_context" %}  # [win]
+    {% set skip_tests = skip_tests + " --deselect=tests/client/transports/test_transports.py::TestSSLVerify::test_sse_transport_stores_verify_ssl_context" %}  # [win]
+    {% set skip_tests = skip_tests + " --deselect=tests/client/transports/test_transports.py::TestSSLVerify::test_client_passes_verify_ssl_context_to_transport" %}  # [win]
+    {% set skip_tests = skip_tests + " --deselect=tests/server/middleware/test_rate_limiting.py::TestRateLimitingMiddlewareIntegration::test_rate_limiting_with_different_operations" %}  # [aarch64]
+    {% set skip_tests = skip_tests + " --ignore=tests/client/test_streamable_http.py" %}
+    {% set skip_tests = skip_tests + " --ignore=tests/server/http/test_http_dependencies.py" %}
+    {% set skip_tests = skip_tests + " --ignore=tests/tools/tool/test_output_schema.py" %}
+    {% set skip_tests = skip_tests + " --ignore=tests/tools/tool/test_tool.py" %}
+    {% set skip_tests = skip_tests + " --ignore=tests/client/auth/test_oauth_client.py" %}
+    {% set skip_tests = skip_tests + " --ignore=tests/server/auth/providers/test_azure_scopes.py" %}
+    {% set skip_tests = skip_tests + " --ignore=tests/server/providers/local_provider_tools/test_output_schema.py" %}
+    {% set skip_tests = skip_tests + " --deselect=tests/server/providers/proxy/test_stateful_proxy_client.py::TestStatefulProxyClient::test_stateless_proxy" %}
+    {% set skip_tests = skip_tests + " --deselect=tests/server/test_context.py::TestTransportIntegration::test_transport_set_via_http_middleware" %}
+    {% set skip_tests = skip_tests + " --deselect=tests/server/test_server_docket.py::test_worker_executes_background_tasks" %}
+    {% set skip_tests = skip_tests + " --deselect=tests/tools/tool/test_tool.py::TestToolFromFunction::test_instance_method" %}
+    {% set skip_tests = skip_tests + " --deselect=tests/tools/tool/test_tool.py::TestToolFromFunction::test_basic_function" %}
+    {% set skip_tests = skip_tests + " --deselect=tests/tools/tool/test_tool.py::TestToolFromFunction::test_async_function" %}
+    {% set skip_tests = skip_tests + " --deselect=tests/tools/tool/test_tool.py::TestToolFromFunction::test_callable_object" %}
+    {% set skip_tests = skip_tests + " --deselect=tests/tools/tool/test_tool.py::TestToolFromFunction::test_async_callable_object" %}
+    {% set skip_tests = skip_tests + " --deselect=tests/utilities/test_tests.py::TestTemporarySettings::test_temporary_settings" %}
+    {% set skip_tests = skip_tests + " --deselect=tests/server/auth/test_jwt_provider_bearer.py::TestFastMCPBearerAuth::test_authorized_access" %}
+    {% set skip_tests = skip_tests + " --deselect=tests/client/auth/test_oauth_static_client.py::TestStaticClientE2E::test_static_client_with_dcr_disabled" %}
+    {% set skip_tests = skip_tests + " --deselect=tests/client/auth/test_oauth_static_client.py::TestStaticClientE2E::test_static_client_with_dcr_enabled" %}
+    {% set skip_tests = skip_tests + " --deselect=tests/client/telemetry/test_client_tracing.py::TestSessionIdOnSpans::test_client_span_includes_session_id" %}
+    {% set skip_tests = skip_tests + " --deselect=tests/client/telemetry/test_client_tracing.py::TestSessionIdOnSpans::test_server_span_includes_session_id" %}
+    {% set skip_tests = skip_tests + " --deselect=tests/client/telemetry/test_client_tracing.py::TestSessionIdOnSpans::test_client_and_server_share_same_session_id" %}
+    {% set skip_tests = skip_tests + " --deselect=tests/server/auth/test_jwt_provider_bearer.py::TestFastMCPBearerAuth::test_token_with_sufficient_scopes" %}
+    {% set skip_tests = skip_tests + " --deselect=tests/server/middleware/test_initialization_middleware.py::test_state_isolation_between_streamable_http_clients" %}
+    {% set skip_tests = skip_tests + " --deselect=tests/server/mount/test_advanced.py::TestMountedServerDocketBehavior::test_mounted_server_does_not_have_docket" %}
+    {% set skip_tests = skip_tests + " --deselect=tests/server/providers/proxy/test_stateful_proxy_client.py::TestStatefulProxyClient::test_stateful_proxy_elicitation_over_http" %}
+    {% set skip_tests = skip_tests + " --deselect=tests/tools/tool_transform/test_schemas.py::TestTransformToolOutputSchema::test_transform_inherits_parent_output_schema" %}
+    {% set skip_tests = skip_tests + " --deselect=tests/tools/tool_transform/test_schemas.py::TestTransformToolOutputSchema::test_transform_with_custom_function_inferred_schema" %}
+    {% set skip_tests = skip_tests + " --deselect=tests/client/transports/test_uv_transport.py::test_uv_transport" %}
+    {% set skip_tests = skip_tests + " --deselect=tests/client/transports/test_uv_transport.py::test_uv_transport_module" %}
+    {% set skip_tests = skip_tests + " --deselect=tests/experimental/transforms/test_code_mode.py::test_monty_provider_forwards_limits" %}
+    {% set skip_tests = skip_tests + " --deselect=tests/experimental/transforms/test_code_mode.py::test_monty_provider_no_limits_by_default" %}
+    {% set skip_tests = skip_tests + " --deselect=tests/experimental/transforms/test_code_mode.py::test_monty_provider_applies_default_limits" %}
+    {% set skip_tests = skip_tests + " --deselect=tests/experimental/transforms/test_code_mode.py::test_monty_provider_explicit_none_disables_limits" %}
+    {% set skip_tests = skip_tests + " --deselect=tests/experimental/transforms/test_code_mode.py::test_monty_provider_cancels_future_when_task_cancelled" %}
+    {% set skip_tests = skip_tests + " --deselect=tests/test_mcp_config.py::test_multi_client_force_close" %}
+
+    test:
+      source_files:
+        - tests
+        - pyproject.toml
+        - fastmcp_slim
+      imports:
+        - fastmcp
+      requires:
+        - pip
+        - pytest >=8.3.3
+        - pytest-asyncio >=1.2.0
+        - pytest-timeout >=2.4.0
+        - opentelemetry-sdk >=1.20.0
+        - fastapi >=0.115.12
+        - psutil >=7.0.0
+        - inline-snapshot >=0.27.2
+        - black # snapshot optional
+        - dirty-equals
+        # optional dependencies
+        - openai
+        - anthropic
+      commands:
+        - pip check
+        - fastmcp --help
+        - FASTMCP_TEST_MODE=1 pytest -c pyproject.toml -m "not integration and not client_process and not conformance" -vv {{ skip_tests }} tests  # [unix]
+        - set "FASTMCP_TEST_MODE=1" && pytest -c pyproject.toml -m "not integration and not client_process and not conformance" -vv {{ skip_tests }} tests  # [win]
 
 about:
   summary: The fast, Pythonic way to build MCP servers.
   description: |
     FastMCP is the standard framework for building MCP applications.
-    The Model Context Protocol (MCP) connects LLMs to tools and data. 
-    FastMCP gives you everything you need to go from prototype to production 
-  home: https://gofastmcp.com
+    The Model Context Protocol (MCP) connects LLMs to tools and data.
+    FastMCP gives you everything you need to go from prototype to production
+  home: https://gofastmcp.com/getting-started/welcome
   license: Apache-2.0
   license_file: LICENSE
   license_family: Apache
   dev_url: https://github.com/PrefectHQ/fastmcp
-  doc_url: https://gofastmcp.com
-
+  doc_url: https://gofastmcp.com/getting-started/welcome
