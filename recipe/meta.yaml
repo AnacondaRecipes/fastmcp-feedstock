@@ -1,14 +1,13 @@
-{% set name = "fastmcp-split" %}
-{% set pypi_name = "fastmcp" %}
-{% set version = "3.4.2" %}
+{% set name = "fastmcp" %}
+{% set version = "3.4.7" %}
 
 package:
-  name: {{ name }}
+  name: {{ name }}-split
   version: {{ version }}
 
 source:
-  url: https://pypi.org/packages/source/{{ pypi_name[0] }}/{{ pypi_name }}/fastmcp-{{ version }}.tar.gz
-  sha256: b468722946fc467c3796a6572f7a14d93d48c014cf8fea12910245220cbbe4e1
+  url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
+  sha256: 43117aca886f5ee2f6a569bba91cef02b59c339aad04ba29950ff18d251c822a
 
 build:
   number: 0
@@ -51,15 +50,8 @@ outputs:
         - mcp >=1.24,<2.0  # mcp
         - opentelemetry-api >=1.20.0  # mcp
         - starlette >=1.0.1  # mcp
+        - openai >=1.102.0  # openai
         - authlib >=1.6.11  # client, server
-        - py-key-value-aio >=0.4.4,<0.5.0  # client, server
-        # py-key-value-aio[filetree]
-        - aiofile  # client, server
-        - anyio  # client, server
-        # py-key-value-aio[memory]
-        - cachetools  # client, server
-        # py-key-value-aio[keyring]
-        - keyring  # client, server
         - cyclopts >=4.0.0  # server
         - griffelib >=2.0.0  # server
         - jsonref >=1.1.0  # server
@@ -67,6 +59,7 @@ outputs:
         - joserfc >=1.1.0  # server
         - openapi-pydantic >=0.5.1  # server
         - packaging >=24.0  # server
+        - py-key-value-aio >=0.4.4,<0.5.0  # client, server
         - pyperclip >=1.9.0  # server
         - python-multipart >=0.0.26  # server
         - pyyaml >=6.0,<7.0  # server
@@ -80,7 +73,6 @@ outputs:
         - pyjwt >=2.12.0  # azure
         - pydantic-monty ==0.0.17  # code-mode
         - google-genai >=1.18.0  # gemini
-        - openai >=1.102.0  # openai
         - pydocket >=0.20.0  # tasks
     test:
       imports:
@@ -118,13 +110,6 @@ outputs:
         - joserfc >=1.1.0
         - openapi-pydantic >=0.5.1
         - packaging >=24.0
-        - pyperclip >=1.9.0
-        - python-multipart >=0.0.26
-        - pyyaml >=6.0,<7.0
-        - uncalled-for >=0.2.0
-        - uvicorn >=0.35
-        - watchfiles >=1.0.0
-        - websockets >=15.0.1
         - py-key-value-aio >=0.4.4,<0.5.0
         # py-key-value-aio[filetree]
         - aiofile
@@ -133,6 +118,13 @@ outputs:
         - cachetools
         # py-key-value-aio[keyring]
         - keyring
+        - pyperclip >=1.9.0
+        - python-multipart >=0.0.26
+        - pyyaml >=6.0,<7.0
+        - uncalled-for >=0.2.0
+        - uvicorn >=0.35
+        - watchfiles >=1.0.0
+        - websockets >=15.0.1
 
     {% set skip_tests = "" %}
 
