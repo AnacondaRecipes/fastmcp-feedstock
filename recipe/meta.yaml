@@ -150,10 +150,6 @@ outputs:
     {% set skip_tests = skip_tests + " --deselect=tests/test_apps.py::TestPrefabAppConfig::test_auto_synthesizes_renderer_resource" %}
     {% set skip_tests = skip_tests + " --deselect=tests/test_apps.py::TestPrefabAppConfig::test_equivalent_to_app_true" %}
 
-    # E   ValueError: Failed to create llama_context
-    # llama_init_from_model: failed to initialize the context: Unsupported ctx type
-    {% set skip_tests = skip_tests + " --ignore=tests/backends/test_llguidance.py" %}
-
     # missing pytest-examples
     {% set skip_tests = skip_tests + " --ignore=tests/docs/test_doc_examples.py" %}
 
