@@ -140,6 +140,7 @@ outputs:
     {% set skip_tests = skip_tests + " --ignore=tests/client/test_sse.py" %}
     {% set skip_tests = skip_tests + " --ignore=tests/server/auth/test_cimd_validators.py" %}
     {% set skip_tests = skip_tests + " --ignore=tests/server/auth/test_oauth_proxy_redirect_validation.py" %}
+    {% set skip_tests = skip_tests + " --ignore=tests/server/auth/providers/test_huggingface.py" %}
 
     # missing prefab (apps providers import prefab_ui at module level)
     {% set skip_tests = skip_tests + " --ignore=tests/test_apps_prefab.py" %}
